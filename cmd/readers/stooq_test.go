@@ -45,3 +45,17 @@ func TestGetParams(t *testing.T) {
 		t.Error("Params don't match")
 	}
 }
+
+func TestGetResponse(t *testing.T) {
+	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -1), time.Now(), "d")
+
+	if err != nil {
+		t.Errorf("FAIL: %s", err)
+	}
+	params := stooqReader.getParams("PKO")
+	_, err = stooqReader.getResponse(params, map[string]string{})
+	if err != nil {
+		t.Errorf("FAIL: %s", err)
+	}
+	// TODO: test response content
+}
