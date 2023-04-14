@@ -7,12 +7,13 @@ import (
 
 
 type StooqDataReader struct {
+	symbols []string
 	startDate time.Time
 	endDate time.Time
 	baseUrl string
 }
 
-func NewStooqDataReader(startDate time.Time, endDate time.Time) (*StooqDataReader, error) {
+func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time) (*StooqDataReader, error) {
 	baseUrl, ok := BaseUrlMap["stooq"]
 
 	if !ok {
@@ -20,6 +21,7 @@ func NewStooqDataReader(startDate time.Time, endDate time.Time) (*StooqDataReade
 	}
 
 	return &StooqDataReader{
+		symbols: symbols,
 		startDate: startDate,
 		endDate: endDate,
 		baseUrl: baseUrl,

@@ -1,6 +1,10 @@
 package reader
 
-import "time"
+import (
+	"time"
+
+	"github.com/go-gota/gota/dataframe"
+)
 
 type SingleRecord struct {
 	date time.Time
@@ -11,7 +15,7 @@ type SingleRecord struct {
 }
 
 type DataReader interface {
-	read() []SingleRecord
+	read() dataframe.DataFrame
 	getParams() map[string]any
 }
 
