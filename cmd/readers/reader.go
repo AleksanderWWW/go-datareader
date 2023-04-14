@@ -16,7 +16,7 @@ type SingleRecord struct {
 
 type DataReader interface {
 	read() dataframe.DataFrame
-	getParams() map[string]any
+	getParams(args ...any) map[string]string
 }
 
 var BaseUrlMap = map[string]string {
