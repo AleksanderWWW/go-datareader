@@ -3,6 +3,7 @@ package reader
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -32,8 +33,8 @@ func TestGetParams(t *testing.T) {
 	expectedParams := map[string]string {
 		"s": "PKO",
 		"i": "d",
-		"d1": d1.Format("2006-01-02"),
-		"d2": d2.Format("2006-01-02"),
+		"d1": d1.Format("20060102"),
+		"d2": d2.Format("20060102"),
 	}
 	params := stooqReader.getParams("PKO")
 
@@ -47,15 +48,21 @@ func TestGetParams(t *testing.T) {
 }
 
 func TestGetResponse(t *testing.T) {
-	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -1), time.Now(), "d")
+	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -10), time.Now(), "d")
 
 	if err != nil {
 		t.Errorf("FAIL: %s", err)
 	}
 	params := stooqReader.getParams("PKO")
-	_, err = stooqReader.getResponse(params, map[string]string{})
+	respText, err := stooqReader.getResponse(params, map[string]string{})
 	if err != nil {
 		t.Errorf("FAIL: %s", err)
 	}
-	// TODO: test response content
+	
+	lines := strings.Split(respText, "\n")
+
+	if len(lines) < 2 {
+		fmt.Println(lines)
+		t.Error("FAILED data was not retrieved correctly")
+	}
 }
