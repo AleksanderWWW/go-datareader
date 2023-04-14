@@ -46,6 +46,7 @@ func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time
 
 	return &StooqDataReader{
 		symbols: symbols,
+		freq: freq,
 		startDate: startDate,
 		endDate: endDate,
 		baseUrl: baseUrl,
