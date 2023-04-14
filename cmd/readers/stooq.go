@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 	"net/http"
-    "net/url"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+	// "github.com/go-gota/gota/dataframe"
 )
 
 var frequenciesAvailable = map[string]bool {
@@ -29,8 +32,8 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string{
 	return map[string]string {
 		"s": symbol,
 		"i": sdr.freq,
-		"d1": sdr.startDate.Format("2006-01-02"),
-		"d2": sdr.endDate.Format("2006-01-02"),
+		"d1": strings.Replace(sdr.startDate.Format("2006-01-02"), "-", "", -1),
+		"d2": strings.Replace(sdr.endDate.Format("2006-01-02"), "-", "", -1),
 	}
 }
 
@@ -72,6 +75,68 @@ func (sdr StooqDataReader) getResponse(params map[string]string, headers map[str
 
 	return string(respText), nil
 }
+
+func (srd StooqDataReader) ParseResponse(respText string) ([]SingleRecord, error) {
+	lines := strings.Split(respText, "\n")
+	records := make([]SingleRecord, 0, len(lines))
+
+	for _, line := range lines[1:len(lines)-1] {
+		items := strings.Split(line, ",")
+
+		date, err := time.Parse("2006-01-02", items[0])
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+
+		open, err := strconv.ParseFloat(items[1], 32)
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+
+		high, err := strconv.ParseFloat(items[2], 32)
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+
+		low, err := strconv.ParseFloat(items[3], 32)
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+
+		close, err := strconv.ParseFloat(items[4], 32)
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+		volume, err := strconv.ParseInt(strings.Replace(items[5], "\r", "", 1), 10, 32)
+		if err != nil {
+			return []SingleRecord{}, err
+		}
+		record := SingleRecord{
+			date: date,
+			open: open,
+			high: high,
+			low: low,
+			close: close,
+			volume: volume,
+		}
+		records = append(records, record)
+	}
+	return records, nil
+}
+
+// func (sdr StooqDataReader) read() dataframe.DataFrame {
+// 	for _, symbol := range sdr.symbols {
+// 		params := sdr.getParams(symbol)
+
+// 		data, err := sdr.getResponse(params, DefaultHeaders)
+
+// 		if err != nil {
+// 			continue
+// 		}
+
+
+// 	}
+// }
 
 
 func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
