@@ -1,7 +1,7 @@
 package reader
 
 import (
-	"log"
+	"errors"
 	"time"
 )
 
@@ -12,16 +12,16 @@ type StooqDataReader struct {
 	baseUrl string
 }
 
-func NewStooqReader(startDate time.Time, endDate time.Time) *StooqDataReader {
+func NewStooqDataReader(startDate time.Time, endDate time.Time) (*StooqDataReader, error) {
 	baseUrl, ok := BaseUrlMap["stooq"]
 
 	if !ok {
-		log.Fatal("Could not find base url for stooq")
+		return &StooqDataReader{}, errors.New("Could not find stooq base url")
 	}
 
 	return &StooqDataReader{
 		startDate: startDate,
 		endDate: endDate,
 		baseUrl: baseUrl,
-	}
+	}, nil
 }
