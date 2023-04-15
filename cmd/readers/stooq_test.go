@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/go-gota/gota/series"
 )
 
 func TestNewStooqDataReader(t *testing.T) {
@@ -65,4 +67,27 @@ func TestGetResponse(t *testing.T) {
 		fmt.Println(lines)
 		t.Error("FAILED data was not retrieved correctly")
 	}
+}
+
+func TestRead(t *testing.T) {
+	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -10), time.Now(), "d")
+
+	if err != nil {
+		t.Errorf("FAIL: %s", err)
+	}
+
+	df := stooqReader.Read()[0]
+
+	if len(df.Records()) == 0 {
+		t.Error("FAILED empty dataframe")
+	}
+	types := df.Types()
+	expectedTypes := []series.Type{"string", "string", "float", "float", "float", "float", "int"}
+
+	comp := reflect.DeepEqual(types, expectedTypes)
+
+	if !comp {
+		fmt.Println(types)
+		t.Error("FAILED types missmatch")
+	}	
 }
