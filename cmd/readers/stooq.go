@@ -82,6 +82,9 @@ func (sdr StooqDataReader) Read() map[string]dataframe.DataFrame {
 		}
 
 		df := dataframe.ReadCSV(strings.NewReader(data))
+		if df.Err != nil {
+			continue
+		}
 		results[symbol] = df
 	}
 	return results
