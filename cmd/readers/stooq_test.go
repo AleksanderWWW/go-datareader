@@ -76,13 +76,13 @@ func TestRead(t *testing.T) {
 		t.Errorf("FAIL: %s", err)
 	}
 
-	df := stooqReader.Read()[0]
+	df := stooqReader.Read()["PKO"]
 
 	if len(df.Records()) == 0 {
 		t.Error("FAILED empty dataframe")
 	}
 	types := df.Types()
-	expectedTypes := []series.Type{"string", "string", "float", "float", "float", "float", "int"}
+	expectedTypes := []series.Type{"string", "float", "float", "float", "float", "int"}
 
 	comp := reflect.DeepEqual(types, expectedTypes)
 

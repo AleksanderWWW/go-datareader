@@ -70,8 +70,8 @@ func (srd StooqDataReader) parseResponse(respText string, symbol string) ([]Sing
 	return records, nil
 }
 
-func (sdr StooqDataReader) Read() []dataframe.DataFrame {
-	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
+func (sdr StooqDataReader) Read() map[string]dataframe.DataFrame {
+	results := make(map[string]dataframe.DataFrame)
 	for _, symbol := range sdr.symbols {
 		params := sdr.getParams(symbol)
 
@@ -81,11 +81,8 @@ func (sdr StooqDataReader) Read() []dataframe.DataFrame {
 			continue
 		}
 
-		records, err := sdr.parseResponse(data, symbol)
-		if err != nil {
-			continue
-		}
-		results = append(results, dataframe.LoadStructs(records))
+		df := dataframe.ReadCSV(strings.NewReader(data))
+		results[symbol] = df
 	}
 	return results
 }
