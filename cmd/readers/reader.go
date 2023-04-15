@@ -1,23 +1,23 @@
 package reader
 
 import (
-	"time"
-
 	"github.com/go-gota/gota/dataframe"
 )
 
 type SingleRecord struct {
-	date time.Time
-	open float64
-	high float64
-	low float64
-	close float64
-	volume int64
+	Symbol string
+	Date string
+	Open float64
+	High float64
+	Low float64
+	Close float64
+	Volume int
 }
 
 type DataReader interface {
-	read() dataframe.DataFrame
+	Read() []dataframe.DataFrame
 	getParams(args ...any) map[string]string
+	getResponse(params map[string]string, headers map[string]string) (string, error)
 }
 
 var BaseUrlMap = map[string]string {
