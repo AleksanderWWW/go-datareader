@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strconv"
 	"strings"
 	"time"
-	// "github.com/go-gota/gota/dataframe"
+
+	"github.com/go-gota/gota/dataframe"
 )
 
 var frequenciesAvailable = map[string]bool {
@@ -38,29 +37,12 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string{
 }
 
 func (sdr StooqDataReader) getResponse(params map[string]string, headers map[string]string) (string, error) {
-	parameters := url.Values{}
-	for k, v := range params {
-		parameters.Add(k, v)
-	}
-
-    u, err := url.ParseRequestURI(sdr.baseUrl)
+	req, err := createRequest(params, headers, sdr.baseUrl)
 	if err != nil {
 		return "", err  
 	}
-
-    u.RawQuery = parameters.Encode()
-    urlStr := fmt.Sprintf("%v", u)
 
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", urlStr, nil)
-	if err != nil {
-		return "", err  
-	}
-
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-
     resp, err := client.Do(req)
 
 	if err != nil {
@@ -76,67 +58,39 @@ func (sdr StooqDataReader) getResponse(params map[string]string, headers map[str
 	return string(respText), nil
 }
 
-func (srd StooqDataReader) ParseResponse(respText string) ([]SingleRecord, error) {
+func (srd StooqDataReader) parseResponse(respText string, symbol string) ([]SingleRecord, error) {
 	lines := strings.Split(respText, "\n")
 	records := make([]SingleRecord, 0, len(lines))
 
 	for _, line := range lines[1:len(lines)-1] {
-		items := strings.Split(line, ",")
-
-		date, err := time.Parse("2006-01-02", items[0])
+		record, err := parseStooqLine(line, symbol)
 		if err != nil {
 			return []SingleRecord{}, err
-		}
-
-		open, err := strconv.ParseFloat(items[1], 32)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-
-		high, err := strconv.ParseFloat(items[2], 32)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-
-		low, err := strconv.ParseFloat(items[3], 32)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-
-		close, err := strconv.ParseFloat(items[4], 32)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-		volume, err := strconv.ParseInt(strings.Replace(items[5], "\r", "", 1), 10, 32)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-		record := SingleRecord{
-			date: date,
-			open: open,
-			high: high,
-			low: low,
-			close: close,
-			volume: volume,
 		}
 		records = append(records, record)
 	}
 	return records, nil
 }
 
-// func (sdr StooqDataReader) read() dataframe.DataFrame {
-// 	for _, symbol := range sdr.symbols {
-// 		params := sdr.getParams(symbol)
+func (sdr StooqDataReader) Read() []dataframe.DataFrame {
+	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
+	for _, symbol := range sdr.symbols {
+		params := sdr.getParams(symbol)
 
-// 		data, err := sdr.getResponse(params, DefaultHeaders)
+		data, err := sdr.getResponse(params, DefaultHeaders)
 
-// 		if err != nil {
-// 			continue
-// 		}
+		if err != nil {
+			continue
+		}
 
-
-// 	}
-// }
+		records, err := sdr.parseResponse(data, symbol)
+		if err != nil {
+			continue
+		}
+		results = append(results, dataframe.LoadStructs(records))
+	}
+	return results
+}
 
 
 func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
