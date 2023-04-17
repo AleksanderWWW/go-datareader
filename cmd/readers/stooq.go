@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-gota/gota/dataframe"
@@ -72,20 +73,29 @@ func (srd StooqDataReader) parseResponse(respText string, symbol string) ([]Sing
 
 func (sdr StooqDataReader) Read() map[string]dataframe.DataFrame {
 	results := make(map[string]dataframe.DataFrame)
+	var wg sync.WaitGroup
+	
 	for _, symbol := range sdr.symbols {
-		params := sdr.getParams(symbol)
+		
+		wg.Add(1)
 
-		data, err := sdr.getResponse(params, DefaultHeaders)
+		go func(symbol string) {
+			defer wg.Done()
+			params := sdr.getParams(symbol)
+			data, err := sdr.getResponse(params, DefaultHeaders)
 
-		if err != nil {
-			continue
-		}
+			if err != nil {
+				return
+			}
 
-		df := dataframe.ReadCSV(strings.NewReader(data))
-		if df.Err != nil {
-			continue
-		}
-		results[symbol] = df
+			df := dataframe.ReadCSV(strings.NewReader(data))
+			if df.Err != nil {
+				return
+			}
+			results[symbol] = df
+		}(symbol)
 	}
+	
+	wg.Wait()
 	return results
 }
