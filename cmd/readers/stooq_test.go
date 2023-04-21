@@ -76,7 +76,7 @@ func TestRead(t *testing.T) {
 		t.Errorf("FAIL: %s", err)
 	}
 
-	df := stooqReader.Read()["PKO"]
+	df := stooqReader.Read()
 
 	if len(df.Records()) == 0 {
 		t.Error("FAILED empty dataframe")

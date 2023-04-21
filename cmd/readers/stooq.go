@@ -71,8 +71,8 @@ func (srd StooqDataReader) parseResponse(respText string, symbol string) ([]Sing
 	return records, nil
 }
 
-func (sdr StooqDataReader) Read() map[string]dataframe.DataFrame {
-	results := make(map[string]dataframe.DataFrame)
+func (sdr StooqDataReader) Read() dataframe.DataFrame {
+	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
 	var wg sync.WaitGroup
 	
 	for _, symbol := range sdr.symbols {
@@ -92,10 +92,38 @@ func (sdr StooqDataReader) Read() map[string]dataframe.DataFrame {
 			if df.Err != nil {
 				return
 			}
-			results[symbol] = df
+
+			df = renameDataframe(df, symbol)
+			
+			results = append(results, df)
 		}(symbol)
 	}
 	
 	wg.Wait()
-	return results
+
+
+	return concatDataframes(results)
+}
+
+
+func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame {
+	for _, name := range df.Names() {
+		if name == "Date" {
+			continue
+		}
+		df = df.Rename(symbol + "-" + name, name)
+	}
+	return df
+}
+
+func concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+	combined := dfs[0]
+	if len(dfs) > 1 {
+
+		for _, df := range dfs[1:] {
+			combined = combined.InnerJoin(df, "Date")
+		}
+	}
+
+	return combined
 }
