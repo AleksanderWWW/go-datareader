@@ -11,8 +11,8 @@ The project currently support the following data providers:
 
 The two main advantages of `go-datareader` over it's counterpart are:
 
-- better overall performance due to string typing and a compiled nature of the Go programming langauge, compared to interpreted, dynamically-typed Python
-- faster data extraction due to the usage of `goroutines`
+- better overall performance due to strong typing and a compiled nature of the Go programming langauge, compared to the interpreted, dynamically-typed Python
+- faster data extraction due to the usage of `goroutines` to send the requests concurrently.
 
 
 
