@@ -14,6 +14,13 @@ The two main advantages of `go-datareader` over it's counterpart are:
 - better overall performance due to strong typing and a compiled nature of the Go programming langauge, compared to the interpreted, dynamically-typed Python
 - faster data extraction due to the usage of `goroutines` to send the requests concurrently.
 
+## Getting started
+
+Run the following command to install the `go-datareader`:
+
+```sh
+$ go get -u github.com/AleksanderWWW/go-datareader
+```
 
 
 ## Example usage
@@ -33,4 +40,9 @@ stooqReader, err := reader.NewStooqDataReader(
 data := stooqReader.Read()  // returns a DataFrame object
 ```
 
-The data is in the form of the `gota dataframe.DataFrame`. 
+The returned data is in the form of the [gota](https://github.com/go-gota/gota) dataframe.
+In this example the quotes are obtained in a "daily" mode. Other available options are:
+- "w": weekly
+- "m": monthly
+- "q": quarterly
+- "y": yearly
