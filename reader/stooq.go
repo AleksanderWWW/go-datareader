@@ -57,20 +57,6 @@ func (sdr StooqDataReader) getResponse(params map[string]string, headers map[str
 	return string(respText), nil
 }
 
-func (srd StooqDataReader) parseResponse(respText string, symbol string) ([]SingleRecord, error) {
-	lines := strings.Split(respText, "\n")
-	records := make([]SingleRecord, 0, len(lines))
-
-	for _, line := range lines[1 : len(lines)-1] {
-		record, err := parseStooqLine(line, symbol)
-		if err != nil {
-			return []SingleRecord{}, err
-		}
-		records = append(records, record)
-	}
-	return records, nil
-}
-
 func (sdr StooqDataReader) Read() dataframe.DataFrame {
 	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
 	var wg sync.WaitGroup
