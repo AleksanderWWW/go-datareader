@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-
 func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
 	baseUrl, ok := BaseUrlMap["stooq"]
 
@@ -20,10 +19,10 @@ func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time
 	}
 
 	return &StooqDataReader{
-		symbols: symbols,
-		freq: freq,
+		symbols:   symbols,
+		freq:      freq,
 		startDate: startDate,
-		endDate: endDate,
-		baseUrl: baseUrl,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
 	}, nil
 }

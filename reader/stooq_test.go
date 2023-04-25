@@ -32,9 +32,9 @@ func TestGetParams(t *testing.T) {
 		t.Errorf("FAIL: %s", err)
 	}
 
-	expectedParams := map[string]string {
-		"s": "PKO",
-		"i": "d",
+	expectedParams := map[string]string{
+		"s":  "PKO",
+		"i":  "d",
 		"d1": d1.Format("20060102"),
 		"d2": d2.Format("20060102"),
 	}
@@ -60,7 +60,7 @@ func TestGetResponse(t *testing.T) {
 	if err != nil {
 		t.Errorf("FAIL: %s", err)
 	}
-	
+
 	lines := strings.Split(respText, "\n")
 
 	if len(lines) < 2 {
@@ -89,5 +89,5 @@ func TestRead(t *testing.T) {
 	if !comp {
 		fmt.Println(types)
 		t.Error("FAILED types missmatch")
-	}	
+	}
 }
