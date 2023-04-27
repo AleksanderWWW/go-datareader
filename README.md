@@ -25,8 +25,10 @@ $ go get -u github.com/AleksanderWWW/go-datareader
 
 
 ## Example usage
-Gather Stooq daily quotes for a couple of tickers from the last 100 days.
+Gather quotes for a couple of tickers from the last 100 days.
+The returned data is in the form of the [gota](https://github.com/go-gota/gota) dataframe. Symbols for which the data could not be obtained are omitted.
 
+### Stooq
 ```
 stooqReader, err := reader.NewStooqDataReader(
 		[]string{"PKO", "KGH", "PZU"},  // stooq tickers
@@ -41,9 +43,26 @@ stooqReader, err := reader.NewStooqDataReader(
 data := stooqReader.Read()  // returns a DataFrame object
 ```
 
-The returned data is in the form of the [gota](https://github.com/go-gota/gota) dataframe.
 In this example the quotes are obtained in a "daily" mode. Other available options are:
 - "w": weekly
 - "m": monthly
 - "q": quarterly
 - "y": yearly
+
+---
+
+### FRED
+```
+fredReader, err := reader.NewFredDataReader(
+		[]string{"SP500", "DJIA", "VIXCLS"},
+		time.Now().AddDate(0, 0, -100),
+		time.Now(),
+	)
+
+// error handling
+// ...
+
+data := reader.Read()
+```
+
+---
