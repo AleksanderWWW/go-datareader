@@ -7,6 +7,9 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/go-gota/gota/series"
 )
 
 func parseStooqLine(line string, symbol string) (SingleRecord, error) {
@@ -49,19 +52,23 @@ func parseStooqLine(line string, symbol string) (SingleRecord, error) {
 func createRequest(params map[string]string, headers map[string]string, baseUrl string) (*http.Request, error) {
 	parameters := url.Values{}
 
+	var urlStr string
+
 	if params != nil {
 		for k, v := range params {
 			parameters.Add(k, v)
 		}
-	}
 
-	u, err := url.ParseRequestURI(baseUrl)
-	if err != nil {
-		return nil, err
-	}
+		u, err := url.ParseRequestURI(baseUrl)
+		if err != nil {
+			return nil, err
+		}
 
-	u.RawQuery = parameters.Encode()
-	urlStr := fmt.Sprintf("%v", u)
+		u.RawQuery = parameters.Encode()
+		urlStr = fmt.Sprintf("%v", u)
+	} else {
+		urlStr = baseUrl
+	}
 
 	req, err := http.NewRequest("GET", urlStr, nil)
 	if err != nil {
@@ -97,4 +104,18 @@ func getResponse(params map[string]string, headers map[string]string, baseUrl st
 	}
 
 	return string(respText), nil
+}
+
+func filterDates(startDate time.Time, endDate time.Time) func(el series.Element) bool {
+	return func(el series.Element) bool {
+		if valStr, ok := el.Val().(string); ok {
+			val, err := time.Parse("2006-01-02", valStr)
+			if err != nil {
+				return false
+			}
+			return (val.After(startDate) || val.Equal(startDate)) &&
+				(val.Before(endDate) || val.Equal(endDate))
+		}
+		return false
+	}
 }
