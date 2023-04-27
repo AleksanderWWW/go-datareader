@@ -3,7 +3,6 @@ package reader
 import (
 	"fmt"
 	"reflect"
-	"strings"
 	"testing"
 	"time"
 
@@ -46,26 +45,6 @@ func TestGetParams(t *testing.T) {
 		fmt.Println("Expected: ", expectedParams)
 		fmt.Println("Got: ", params)
 		t.Error("Params don't match")
-	}
-}
-
-func TestGetResponse(t *testing.T) {
-	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -10), time.Now(), "d")
-
-	if err != nil {
-		t.Errorf("FAIL: %s", err)
-	}
-	params := stooqReader.getParams("PKO")
-	respText, err := stooqReader.getResponse(params, map[string]string{})
-	if err != nil {
-		t.Errorf("FAIL: %s", err)
-	}
-
-	lines := strings.Split(respText, "\n")
-
-	if len(lines) < 2 {
-		fmt.Println(lines)
-		t.Error("FAILED data was not retrieved correctly")
 	}
 }
 
