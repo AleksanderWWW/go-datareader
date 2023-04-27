@@ -6,16 +6,6 @@ import (
 	"github.com/go-gota/gota/dataframe"
 )
 
-type SingleRecord struct {
-	Symbol string
-	Date   string
-	Open   float64
-	High   float64
-	Low    float64
-	Close  float64
-	Volume int
-}
-
 type DataReader interface {
 	getSymbols() []string
 	readSingle(symbol string) (dataframe.DataFrame, error)
