@@ -2,7 +2,6 @@ package reader
 
 import (
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/go-gota/gota/dataframe"
@@ -24,6 +23,10 @@ type StooqDataReader struct {
 	baseUrl   string
 }
 
+func (sdr StooqDataReader) getSymbols() []string {
+	return sdr.symbols
+}
+
 func (sdr StooqDataReader) getParams(symbol string) map[string]string {
 	return map[string]string{
 		"s":  symbol,
@@ -33,37 +36,22 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string {
 	}
 }
 
-func (sdr StooqDataReader) Read() dataframe.DataFrame {
-	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
-	var wg sync.WaitGroup
+func (sdr StooqDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
+	params := sdr.getParams(symbol)
+	data, err := getResponse(params, DefaultHeaders, sdr.baseUrl)
 
-	for _, symbol := range sdr.symbols {
-
-		wg.Add(1)
-
-		go func(symbol string) {
-			defer wg.Done()
-			params := sdr.getParams(symbol)
-			data, err := getResponse(params, DefaultHeaders, sdr.baseUrl)
-
-			if err != nil {
-				return
-			}
-
-			df := dataframe.ReadCSV(strings.NewReader(data))
-			if df.Err != nil {
-				return
-			}
-
-			df = renameDataframe(df, symbol)
-
-			results = append(results, df)
-		}(symbol)
+	if err != nil {
+		return dataframe.DataFrame{}, err
 	}
 
-	wg.Wait()
+	df := dataframe.ReadCSV(strings.NewReader(data))
+	if df.Error() != nil {
+		return dataframe.DataFrame{}, df.Error()
+	}
 
-	return concatDataframes(results)
+	df = renameDataframe(df, symbol)
+
+	return df, nil
 }
 
 func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame {
@@ -76,7 +64,7 @@ func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame 
 	return df
 }
 
-func concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+func (sdr StooqDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
 	combined := dfs[0]
 	if len(dfs) > 1 {
 

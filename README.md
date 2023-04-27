@@ -40,7 +40,7 @@ stooqReader, err := reader.NewStooqDataReader(
 // error handling
 // ...
 
-data := stooqReader.Read()  // returns a DataFrame object
+data := reader.GetData(stooqReader)  // returns a DataFrame object
 ```
 
 In this example the quotes are obtained in a "daily" mode. Other available options are:
@@ -62,7 +62,7 @@ fredReader, err := reader.NewFredDataReader(
 // error handling
 // ...
 
-data := reader.Read()
+data := reader.GetData(fredReader)
 ```
 
 ---

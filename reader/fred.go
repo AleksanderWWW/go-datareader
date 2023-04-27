@@ -3,7 +3,6 @@ package reader
 import (
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/go-gota/gota/dataframe"
@@ -15,6 +14,10 @@ type FredDataReader struct {
 	startDate time.Time
 	endDate   time.Time
 	baseUrl   string
+}
+
+func (fdr *FredDataReader) getSymbols() []string {
+	return fdr.symbols
 }
 
 func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
@@ -50,32 +53,7 @@ func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error
 	return df, nil
 }
 
-func (fdr *FredDataReader) Read() dataframe.DataFrame {
-	results := make([]dataframe.DataFrame, 0, len(fdr.symbols))
-	var wg sync.WaitGroup
-
-	for _, symbol := range fdr.symbols {
-
-		wg.Add(1)
-
-		go func(symbol string) {
-			defer wg.Done()
-
-			singleDf, err := fdr.readSingle(symbol)
-			if err != nil {
-				return
-			}
-
-			results = append(results, singleDf)
-		}(symbol)
-	}
-
-	wg.Wait()
-
-	return concatFredDataframes(results)
-}
-
-func concatFredDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+func (fdr *FredDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
 	combined := dfs[0]
 	if len(dfs) > 1 {
 
