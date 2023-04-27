@@ -5,7 +5,7 @@
 The project currently support the following data providers:
 
 - [Stooq](https://stooq.com)
-- [FRED] (https://fred.stlouisfed.org)
+- [FRED](https://fred.stlouisfed.org)
 
 
 ## Advantages over pandas-datareader
