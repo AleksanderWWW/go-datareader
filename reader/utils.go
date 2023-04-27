@@ -2,6 +2,7 @@ package reader
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -47,8 +48,11 @@ func parseStooqLine(line string, symbol string) (SingleRecord, error) {
 
 func createRequest(params map[string]string, headers map[string]string, baseUrl string) (*http.Request, error) {
 	parameters := url.Values{}
-	for k, v := range params {
-		parameters.Add(k, v)
+
+	if params != nil {
+		for k, v := range params {
+			parameters.Add(k, v)
+		}
 	}
 
 	u, err := url.ParseRequestURI(baseUrl)
@@ -64,9 +68,33 @@ func createRequest(params map[string]string, headers map[string]string, baseUrl 
 		return nil, err
 	}
 
-	for k, v := range headers {
-		req.Header.Add(k, v)
+	if headers != nil {
+		for k, v := range headers {
+			req.Header.Add(k, v)
+		}
 	}
 
 	return req, nil
+}
+
+func getResponse(params map[string]string, headers map[string]string, baseUrl string) (string, error) {
+	req, err := createRequest(params, headers, baseUrl)
+	if err != nil {
+		return "", err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+	respText, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(respText), nil
 }

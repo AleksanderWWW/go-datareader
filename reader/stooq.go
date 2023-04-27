@@ -1,8 +1,6 @@
 package reader
 
 import (
-	"io"
-	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -35,28 +33,6 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string {
 	}
 }
 
-func (sdr StooqDataReader) getResponse(params map[string]string, headers map[string]string) (string, error) {
-	req, err := createRequest(params, headers, sdr.baseUrl)
-	if err != nil {
-		return "", err
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return "", err
-	}
-
-	defer resp.Body.Close()
-	respText, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(respText), nil
-}
-
 func (sdr StooqDataReader) Read() dataframe.DataFrame {
 	results := make([]dataframe.DataFrame, 0, len(sdr.symbols))
 	var wg sync.WaitGroup
@@ -68,7 +44,7 @@ func (sdr StooqDataReader) Read() dataframe.DataFrame {
 		go func(symbol string) {
 			defer wg.Done()
 			params := sdr.getParams(symbol)
-			data, err := sdr.getResponse(params, DefaultHeaders)
+			data, err := getResponse(params, DefaultHeaders, sdr.baseUrl)
 
 			if err != nil {
 				return
