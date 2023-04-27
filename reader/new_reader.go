@@ -26,3 +26,18 @@ func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time
 		baseUrl:   baseUrl,
 	}, nil
 }
+
+func NewFredDataReader(symbols []string, startDate time.Time, endDate time.Time) (*FredDataReader, error) {
+	baseUrl, ok := BaseUrlMap["fred"]
+
+	if !ok {
+		return &FredDataReader{}, errors.New("Could not find fred base url")
+	}
+
+	return &FredDataReader{
+		symbols:   symbols,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
+}

@@ -22,6 +22,7 @@ type DataReader interface {
 
 var BaseUrlMap = map[string]string{
 	"stooq": "https://stooq.com/q/d/l",
+	"fred":  "https://fred.stlouisfed.org/graph/fredgraph.csv",
 }
 
 var DefaultHeaders = map[string]string{
