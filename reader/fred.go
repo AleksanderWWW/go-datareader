@@ -24,7 +24,12 @@ func (fdr *FredDataReader) readSingle(symbol string) dataframe.DataFrame {
 		return dataframe.DataFrame{}
 	}
 
-	df := dataframe.ReadCSV(strings.NewReader(data))
+	df := dataframe.ReadCSV(strings.NewReader(data),
+		dataframe.DetectTypes(false),
+		dataframe.DefaultType(series.Float),
+		dataframe.WithTypes(map[string]series.Type{
+			"DATE": series.String,
+		}))
 
 	if df.Error() != nil {
 		return dataframe.DataFrame{}
@@ -41,8 +46,6 @@ func (fdr *FredDataReader) readSingle(symbol string) dataframe.DataFrame {
 	if df.Error() != nil {
 		return dataframe.DataFrame{}
 	}
-
-	// df = renameDataframe(df, symbol)
 
 	return df
 }
