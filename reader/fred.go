@@ -17,11 +17,11 @@ type FredDataReader struct {
 	baseUrl   string
 }
 
-func (fdr *FredDataReader) readSingle(symbol string) dataframe.DataFrame {
+func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
 	data, err := getResponse(nil, nil, fmt.Sprintf("%s?id=%s", fdr.baseUrl, symbol))
 
 	if err != nil {
-		return dataframe.DataFrame{}
+		return dataframe.DataFrame{}, err
 	}
 
 	df := dataframe.ReadCSV(strings.NewReader(data),
@@ -32,7 +32,7 @@ func (fdr *FredDataReader) readSingle(symbol string) dataframe.DataFrame {
 		}))
 
 	if df.Error() != nil {
-		return dataframe.DataFrame{}
+		return dataframe.DataFrame{}, df.Error()
 	}
 
 	df = df.Filter(
@@ -44,10 +44,10 @@ func (fdr *FredDataReader) readSingle(symbol string) dataframe.DataFrame {
 		},
 	)
 	if df.Error() != nil {
-		return dataframe.DataFrame{}
+		return dataframe.DataFrame{}, df.Error()
 	}
 
-	return df
+	return df, nil
 }
 
 func (fdr *FredDataReader) Read() dataframe.DataFrame {
@@ -61,7 +61,11 @@ func (fdr *FredDataReader) Read() dataframe.DataFrame {
 		go func(symbol string) {
 			defer wg.Done()
 
-			singleDf := fdr.readSingle(symbol)
+			singleDf, err := fdr.readSingle(symbol)
+			if err != nil {
+				return
+			}
+
 			results = append(results, singleDf)
 		}(symbol)
 	}
