@@ -16,7 +16,6 @@ type SingleRecord struct {
 
 type DataReader interface {
 	Read() dataframe.DataFrame
-	getParams(args ...any) map[string]string
 	getResponse(params map[string]string, headers map[string]string) (string, error)
 }
 
