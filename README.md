@@ -6,6 +6,7 @@ The project currently support the following data providers:
 
 - [Stooq](https://stooq.com)
 - [FRED](https://fred.stlouisfed.org)
+- [Bank of Canada](https://www.bankofcanada.ca/)
 
 
 ## Advantages over pandas-datareader
@@ -64,5 +65,23 @@ fredReader, err := reader.NewFredDataReader(
 
 data := reader.GetData(fredReader)
 ```
+
+---
+
+### Bank of Canada
+```
+bocReader, err := reader.NewBOCDataReader(
+		[]string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
+		time.Now().AddDate(0, 0, -100),
+		time.Now(),
+	)
+
+// error handling
+// ...
+
+data := reader.GetData(bocReader)
+```
+
+The list of available symbols can be found [here](https://www.bankofcanada.ca/valet/lists/series).
 
 ---
