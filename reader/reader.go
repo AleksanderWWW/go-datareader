@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/go-gota/gota/dataframe"
@@ -15,6 +16,7 @@ type DataReader interface {
 var BaseUrlMap = map[string]string{
 	"stooq": "https://stooq.com/q/d/l",
 	"fred":  "https://fred.stlouisfed.org/graph/fredgraph.csv",
+	"boc":   "http://www.bankofcanada.ca/valet/observations",
 }
 
 var DefaultHeaders = map[string]string{
@@ -38,6 +40,7 @@ func GetData(reader DataReader) dataframe.DataFrame {
 
 			singleDf, err := reader.readSingle(symbol)
 			if err != nil {
+				fmt.Println(err)
 				return
 			}
 
