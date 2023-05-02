@@ -40,7 +40,7 @@ func TestGetData(t *testing.T) {
 		series.New([]int{1, 2}, series.Int, "Index"),
 		series.New([]string{"b", "a"}, series.String, "testSymbol1"),
 		series.New([]string{"b", "a"}, series.String, "testSymbol2"),
-		series.New([]string{"b", "a"}, series.String, "testSymbol1"),
+		series.New([]string{"b", "a"}, series.String, "testSymbol3"),
 	)
 
 	obtained := GetData(mockReader)
