@@ -41,3 +41,18 @@ func NewFredDataReader(symbols []string, startDate time.Time, endDate time.Time)
 		baseUrl:   baseUrl,
 	}, nil
 }
+
+func NewBOCDataReader(symbols []string, startDate time.Time, endDate time.Time) (*BOCDataReader, error) {
+	baseUrl, ok := BaseUrlMap["boc"]
+
+	if !ok {
+		return &BOCDataReader{}, errors.New("Could not find fred base url")
+	}
+
+	return &BOCDataReader{
+		symbols:   symbols,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
+}
