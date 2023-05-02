@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 )
 
@@ -79,4 +80,14 @@ func filterDates(startDate time.Time, endDate time.Time) func(el series.Element)
 		}
 		return false
 	}
+}
+
+func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame {
+	for _, name := range df.Names() {
+		if name == "Date" {
+			continue
+		}
+		df = df.Rename(symbol+"-"+name, name)
+	}
+	return df
 }

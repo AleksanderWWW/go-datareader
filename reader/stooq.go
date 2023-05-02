@@ -54,16 +54,6 @@ func (sdr StooqDataReader) readSingle(symbol string) (dataframe.DataFrame, error
 	return df, nil
 }
 
-func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame {
-	for _, name := range df.Names() {
-		if name == "Date" {
-			continue
-		}
-		df = df.Rename(symbol+"-"+name, name)
-	}
-	return df
-}
-
 func (sdr StooqDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
 	combined := dfs[0]
 	if len(dfs) > 1 {
