@@ -46,7 +46,7 @@ func NewBOCDataReader(symbols []string, startDate time.Time, endDate time.Time) 
 	baseUrl, ok := BaseUrlMap["boc"]
 
 	if !ok {
-		return &BOCDataReader{}, errors.New("Could not find fred base url")
+		return &BOCDataReader{}, errors.New("Could not find Bank of Canada base url")
 	}
 
 	return &BOCDataReader{
