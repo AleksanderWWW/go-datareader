@@ -1,6 +1,8 @@
 package reader
 
 import (
+	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"sync"
@@ -9,6 +11,8 @@ import (
 )
 
 const LogsDirpath string = "logs"
+
+const LogsFilePermission fs.FileMode = 0777
 
 type DataReader interface {
 	getName() string
@@ -31,17 +35,21 @@ var DefaultHeaders = map[string]string{
 }
 
 func GetData(reader DataReader) dataframe.DataFrame {
-	if _, err := os.Stat("logs"); os.IsNotExist(err) {
-		os.Mkdir("logs", 0666)
+	if _, err := os.Stat(LogsDirpath); os.IsNotExist(err) {
+		os.Mkdir(LogsDirpath, LogsFilePermission)
 	}
 
 	loggerName := getLoggerName(reader.getName())
 
-	loggerPath, _ := os.OpenFile(LogsDirpath+"/"+loggerName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	loggerPath, err := os.OpenFile(LogsDirpath+"/"+loggerName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, LogsFilePermission)
+	if err != nil {
+		fmt.Printf("Error setting up logging %s. Logs will not be saved", err)
+	}
 
 	defer loggerPath.Close()
 
 	errorLogger := log.New(loggerPath, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	errorLogger.Println("SOme messae")
 
 	symbols := reader.getSymbols()
 	results := make([]dataframe.DataFrame, 0, len(symbols))
