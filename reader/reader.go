@@ -1,13 +1,17 @@
 package reader
 
 import (
-	"fmt"
+	"log"
+	"os"
 	"sync"
 
 	"github.com/go-gota/gota/dataframe"
 )
 
+const LogsDirpath string = "logs"
+
 type DataReader interface {
+	getName() string
 	getSymbols() []string
 	readSingle(symbol string) (dataframe.DataFrame, error)
 	concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame
@@ -27,6 +31,18 @@ var DefaultHeaders = map[string]string{
 }
 
 func GetData(reader DataReader) dataframe.DataFrame {
+	if _, err := os.Stat("logs"); os.IsNotExist(err) {
+		os.Mkdir("logs", 0666)
+	}
+
+	loggerName := getLoggerName(reader.getName())
+
+	loggerPath, _ := os.OpenFile(LogsDirpath+"/"+loggerName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+
+	defer loggerPath.Close()
+
+	errorLogger := log.New(loggerPath, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+
 	symbols := reader.getSymbols()
 	results := make([]dataframe.DataFrame, 0, len(symbols))
 	var wg sync.WaitGroup
@@ -40,7 +56,7 @@ func GetData(reader DataReader) dataframe.DataFrame {
 
 			singleDf, err := reader.readSingle(symbol)
 			if err != nil {
-				fmt.Println(err)
+				errorLogger.Println(symbol, err)
 				return
 			}
 

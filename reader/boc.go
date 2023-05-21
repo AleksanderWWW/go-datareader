@@ -15,6 +15,10 @@ type BOCDataReader struct {
 	baseUrl   string
 }
 
+func (bdr BOCDataReader) getName() string {
+	return "bank-of-canada"
+}
+
 func (bdr BOCDataReader) getSymbols() []string {
 	result := strings.Join(bdr.symbols, ",")
 

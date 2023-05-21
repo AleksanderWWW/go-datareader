@@ -23,6 +23,10 @@ type StooqDataReader struct {
 	baseUrl   string
 }
 
+func (sdr StooqDataReader) getName() string {
+	return "stooq"
+}
+
 func (sdr StooqDataReader) getSymbols() []string {
 	return sdr.symbols
 }

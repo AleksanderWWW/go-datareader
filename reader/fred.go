@@ -16,6 +16,10 @@ type FredDataReader struct {
 	baseUrl   string
 }
 
+func (fdr FredDataReader) getName() string {
+	return "fred"
+}
+
 func (fdr *FredDataReader) getSymbols() []string {
 	return fdr.symbols
 }

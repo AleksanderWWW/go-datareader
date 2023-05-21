@@ -13,6 +13,10 @@ type MockReader struct {
 	concatDataframesCallCount int
 }
 
+func (mr MockReader) getName() string {
+	return "mock-reader"
+}
+
 func (mr MockReader) getSymbols() []string {
 	return []string{"testSymbol1", "testSymbol2", "testSymbol3"}
 }
