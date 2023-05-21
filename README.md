@@ -2,7 +2,7 @@
 
 `go-datareader` is a library for downloading financial data in a tabular form. It's written in [Go](https://go.dev/) and therefore aims to be a more performant counterpart of the Python's [pandas-datareader](https://github.com/pydata/pandas-datareader).
 
-The project currently support the following data providers:
+The project currently supports the following data providers:
 
 - [Stooq](https://stooq.com)
 - [FRED](https://fred.stlouisfed.org)
