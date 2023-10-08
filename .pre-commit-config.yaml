@@ -5,12 +5,15 @@ repos:
     - id: check-merge-conflict
     - id: check-yaml
     - id: end-of-file-fixer
+      exclude: ^vendor/
     - id: trailing-whitespace
+      exclude: ^vendor/
 
 - repo: https://github.com/dnephin/pre-commit-golang
   rev: v0.5.1
   hooks:
     - id: go-fmt
+      exclude: ^vendor/
 
 - repo: https://github.com/trufflesecurity/trufflehog.git
   rev: v3.40.0
@@ -18,3 +21,4 @@ repos:
     - id: trufflehog
       name: secret scan
       entry: bash -c 'trufflehog git file://. --since-commit HEAD --only-verified --fail'
+      exclude: ^vendor/
