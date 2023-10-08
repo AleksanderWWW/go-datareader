@@ -21,12 +21,6 @@ type DataReader interface {
 	concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame
 }
 
-var BaseUrlMap = map[string]string{
-	"stooq": "https://stooq.com/q/d/l",
-	"fred":  "https://fred.stlouisfed.org/graph/fredgraph.csv",
-	"boc":   "http://www.bankofcanada.ca/valet/observations",
-}
-
 var DefaultHeaders = map[string]string{
 	"Connection":                "keep-alive",
 	"Expires":                   "-1",
@@ -49,7 +43,6 @@ func GetData(reader DataReader) dataframe.DataFrame {
 	defer loggerPath.Close()
 
 	errorLogger := log.New(loggerPath, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLogger.Println("SOme messae")
 
 	symbols := reader.getSymbols()
 	results := make([]dataframe.DataFrame, 0, len(symbols))

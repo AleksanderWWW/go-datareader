@@ -2,6 +2,7 @@ package reader
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -13,6 +14,17 @@ type BOCDataReader struct {
 	startDate time.Time
 	endDate   time.Time
 	baseUrl   string
+}
+
+func NewBOCDataReader(symbols []string, startDate time.Time, endDate time.Time) (*BOCDataReader, error) {
+	baseUrl := "http://www.bankofcanada.ca/valet/observations"
+
+	return &BOCDataReader{
+		symbols:   symbols,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
 }
 
 func (bdr BOCDataReader) getName() string {
@@ -34,12 +46,12 @@ func (bdr BOCDataReader) getParams() map[string]string {
 
 func (bdr BOCDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
 	params := bdr.getParams()
-	url := bdr.baseUrl + "/" + symbol + "/csv"
+	url := fmt.Sprintf("%s/%s/csv", bdr.baseUrl, symbol)
 	data, err := getResponse(params, DefaultHeaders, url)
 
 	data_splitted := strings.Split(data, "OBSERVATIONS")
 
-	if len(data_splitted) == 1 {
+	if len(data_splitted) < 2 {
 		err = errors.New(data)
 		return dataframe.DataFrame{}, err
 	}

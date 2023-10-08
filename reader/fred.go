@@ -16,6 +16,17 @@ type FredDataReader struct {
 	baseUrl   string
 }
 
+func NewFredDataReader(symbols []string, startDate time.Time, endDate time.Time) (*FredDataReader, error) {
+	baseUrl := "https://fred.stlouisfed.org/graph/fredgraph.csv"
+
+	return &FredDataReader{
+		symbols:   symbols,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
+}
+
 func (fdr FredDataReader) getName() string {
 	return "fred"
 }

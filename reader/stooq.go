@@ -1,6 +1,8 @@
 package reader
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -21,6 +23,23 @@ type StooqDataReader struct {
 	endDate   time.Time
 	freq      string
 	baseUrl   string
+}
+
+func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
+	baseUrl := "https://stooq.com/q/d/l"
+
+	if _, ok := frequenciesAvailable[freq]; !ok {
+		errMsg := fmt.Sprintf("Incorrect frequency chosen: %s", freq)
+		return &StooqDataReader{}, errors.New(errMsg)
+	}
+
+	return &StooqDataReader{
+		symbols:   symbols,
+		freq:      freq,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
 }
 
 func (sdr StooqDataReader) getName() string {
