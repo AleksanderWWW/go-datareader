@@ -15,6 +15,21 @@ type BOCDataReader struct {
 	baseUrl   string
 }
 
+func NewBOCDataReader(symbols []string, startDate time.Time, endDate time.Time) (*BOCDataReader, error) {
+	baseUrl, ok := BaseUrlMap["boc"]
+
+	if !ok {
+		return &BOCDataReader{}, errors.New("Could not find Bank of Canada base url")
+	}
+
+	return &BOCDataReader{
+		symbols:   symbols,
+		startDate: startDate,
+		endDate:   endDate,
+		baseUrl:   baseUrl,
+	}, nil
+}
+
 func (bdr BOCDataReader) getName() string {
 	return "bank-of-canada"
 }
