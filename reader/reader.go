@@ -49,7 +49,6 @@ func GetData(reader DataReader) dataframe.DataFrame {
 	defer loggerPath.Close()
 
 	errorLogger := log.New(loggerPath, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLogger.Println("SOme messae")
 
 	symbols := reader.getSymbols()
 	results := make([]dataframe.DataFrame, 0, len(symbols))
