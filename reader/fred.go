@@ -1,7 +1,6 @@
 package reader
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -18,11 +17,7 @@ type FredDataReader struct {
 }
 
 func NewFredDataReader(symbols []string, startDate time.Time, endDate time.Time) (*FredDataReader, error) {
-	baseUrl, ok := BaseUrlMap["fred"]
-
-	if !ok {
-		return &FredDataReader{}, errors.New("Could not find fred base url")
-	}
+	baseUrl := "https://fred.stlouisfed.org/graph/fredgraph.csv"
 
 	return &FredDataReader{
 		symbols:   symbols,

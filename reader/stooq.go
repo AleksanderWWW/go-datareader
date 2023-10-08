@@ -26,11 +26,7 @@ type StooqDataReader struct {
 }
 
 func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
-	baseUrl, ok := BaseUrlMap["stooq"]
-
-	if !ok {
-		return &StooqDataReader{}, errors.New("Could not find stooq base url")
-	}
+	baseUrl := "https://stooq.com/q/d/l"
 
 	if _, ok := frequenciesAvailable[freq]; !ok {
 		errMsg := fmt.Sprintf("Incorrect frequency chosen: %s", freq)
