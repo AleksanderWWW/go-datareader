@@ -44,3 +44,20 @@ func TestTiingoReaderCustomInit(t *testing.T) {
 		t.Errorf("Wrong value of API key attribute.\n Expected: \t%s\n Actual: \t%s", apiKey, tdr.apiKey)
 	}
 }
+
+func TestTiingoReaderEmptyAPIKeyAndNoEnv(t *testing.T) {
+	startDate := time.Now().AddDate(-2, 0, 0)
+	endDate := time.Now()
+	apiKey := ""
+	os.Unsetenv(TIINGO_API_KEY)
+	_, err := NewTiingoDailyReader(
+		[]string{"sym1", "sym2"},
+		&startDate,
+		&endDate,
+		&apiKey,
+	)
+
+	if err == nil {
+		t.Error("Expected error not raised")
+	}
+}
