@@ -13,30 +13,45 @@ type TiingoReader struct {
 	startDate time.Time
 	endDate   time.Time
 	baseUrl   string
-	apiKey    *string
+	apiKey    string
 }
 
 func NewTiingoReader(symbols []string,
-	startDate time.Time,
-	endDate time.Time,
+	startDate *time.Time,
+	endDate *time.Time,
 	apiKey *string) (*TiingoReader, error) {
 
-	baseUrl := "https://api.tiingo.com/tiingo/daily/%s/prices"
+	var startDateVal time.Time
+	var endDateVal time.Time
+	var apiKeyVal string
 
-	if len(*apiKey) == 0 || apiKey == nil {
-		*apiKey = os.Getenv(TIINGO_API_KEY)
+	// defaults
+	if startDate == nil {
+		startDateVal = time.Now().AddDate(-5, 0, 0)
+	} else {
+		startDateVal = *startDate
 	}
 
-	if len(*apiKey) == 0 {
+	if endDate == nil {
+		endDateVal = time.Now()
+	} else {
+		endDateVal = *endDate
+	}
+
+	if apiKey == nil || len(*apiKey) == 0 {
+		apiKeyVal = os.Getenv(TIINGO_API_KEY)
+	}
+
+	if len(apiKeyVal) == 0 {
 		return &TiingoReader{}, fmt.Errorf("API token not found")
 	}
 
 	return &TiingoReader{
 		symbols:   symbols,
-		startDate: startDate,
-		endDate:   endDate,
-		baseUrl:   baseUrl,
-		apiKey:    apiKey,
+		startDate: startDateVal,
+		endDate:   endDateVal,
+		baseUrl:   "https://api.tiingo.com/tiingo/daily/%s/prices",
+		apiKey:    apiKeyVal,
 	}, nil
 }
 
@@ -59,7 +74,7 @@ func (tdr *TiingoReader) getParams() map[string]string {
 func (tdr *TiingoReader) getHeaders() map[string]string {
 	return map[string]string{
 		"Content-Type":  "application/json",
-		"Authorization": fmt.Sprintf("Token %s", *tdr.apiKey),
+		"Authorization": fmt.Sprintf("Token %s", tdr.apiKey),
 	}
 }
 
