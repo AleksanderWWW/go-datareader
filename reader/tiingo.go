@@ -40,6 +40,8 @@ func NewTiingoReader(symbols []string,
 
 	if apiKey == nil || len(*apiKey) == 0 {
 		apiKeyVal = os.Getenv(TIINGO_API_KEY)
+	} else {
+		apiKeyVal = *apiKey
 	}
 
 	if len(apiKeyVal) == 0 {
