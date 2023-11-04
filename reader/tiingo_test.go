@@ -9,7 +9,7 @@ import (
 func TestTiingoReaderDefaultInit(t *testing.T) {
 	apiKey := "test-key"
 	os.Setenv(TIINGO_API_KEY, apiKey)
-	tdr, err := NewTiingoReader(
+	tdr, err := NewTiingoDailyReader(
 		[]string{},
 		nil,
 		nil,
@@ -29,7 +29,7 @@ func TestTiingoReaderCustomInit(t *testing.T) {
 	startDate := time.Now().AddDate(-2, 0, 0)
 	endDate := time.Now()
 	apiKey := "MySecretAPIKey"
-	tdr, err := NewTiingoReader(
+	tdr, err := NewTiingoDailyReader(
 		[]string{"sym1", "sym2"},
 		&startDate,
 		&endDate,

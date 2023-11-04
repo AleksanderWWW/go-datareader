@@ -27,7 +27,7 @@ type TiingoRecord struct {
 	SplitFactor float32 `json:"SplitFactor"`
 }
 
-type TiingoReader struct {
+type TiingoDailyReader struct {
 	symbols   []string
 	startDate time.Time
 	endDate   time.Time
@@ -35,10 +35,10 @@ type TiingoReader struct {
 	apiKey    string
 }
 
-func NewTiingoReader(symbols []string,
+func NewTiingoDailyReader(symbols []string,
 	startDate *time.Time,
 	endDate *time.Time,
-	apiKey *string) (*TiingoReader, error) {
+	apiKey *string) (*TiingoDailyReader, error) {
 
 	var startDateVal time.Time
 	var endDateVal time.Time
@@ -64,10 +64,10 @@ func NewTiingoReader(symbols []string,
 	}
 
 	if len(apiKeyVal) == 0 {
-		return &TiingoReader{}, fmt.Errorf("API token not found")
+		return &TiingoDailyReader{}, fmt.Errorf("API token not found")
 	}
 
-	return &TiingoReader{
+	return &TiingoDailyReader{
 		symbols:   symbols,
 		startDate: startDateVal,
 		endDate:   endDateVal,
@@ -76,15 +76,15 @@ func NewTiingoReader(symbols []string,
 	}, nil
 }
 
-func (tdr *TiingoReader) getName() string {
+func (tdr *TiingoDailyReader) getName() string {
 	return "tiingo"
 }
 
-func (tdr *TiingoReader) getSymbols() []string {
+func (tdr *TiingoDailyReader) getSymbols() []string {
 	return tdr.symbols
 }
 
-func (tdr *TiingoReader) params() map[string]string {
+func (tdr *TiingoDailyReader) params() map[string]string {
 	return map[string]string{
 		"startDate": tdr.startDate.Format("2006-01-02"),
 		"endDate":   tdr.endDate.Format("2006-01-02"),
@@ -92,18 +92,18 @@ func (tdr *TiingoReader) params() map[string]string {
 	}
 }
 
-func (tdr *TiingoReader) headers() map[string]string {
+func (tdr *TiingoDailyReader) headers() map[string]string {
 	return map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": fmt.Sprintf("Token %s", tdr.apiKey),
 	}
 }
 
-func (tdr *TiingoReader) url(symbol string) string {
+func (tdr *TiingoDailyReader) url(symbol string) string {
 	return fmt.Sprintf(tdr.baseUrl, symbol)
 }
 
-func (tdr *TiingoReader) readSingle(symbol string) (dataframe.DataFrame, error) {
+func (tdr *TiingoDailyReader) readSingle(symbol string) (dataframe.DataFrame, error) {
 	data, err := getResponse(tdr.params(), tdr.headers(), tdr.url(symbol))
 	if err != nil {
 		return dataframe.DataFrame{}, err
@@ -112,7 +112,7 @@ func (tdr *TiingoReader) readSingle(symbol string) (dataframe.DataFrame, error) 
 	return renameDataframe(df, symbol), nil
 }
 
-func (tdr *TiingoReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+func (tdr *TiingoDailyReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
 	combined := dfs[0]
 	if len(dfs) > 1 {
 		for _, df := range dfs[1:] {
