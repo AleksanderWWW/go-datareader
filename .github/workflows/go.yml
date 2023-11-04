@@ -26,3 +26,5 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+      env:
+        TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
