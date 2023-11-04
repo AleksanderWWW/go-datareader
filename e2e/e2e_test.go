@@ -20,6 +20,7 @@ func TestE2e(t *testing.T) {
 	}
 
 	reader.GetData(stooqReader)
+	// ---------------------------------------------------
 
 	fredReader, err := reader.NewFredDataReader(
 		[]string{"SP500", "DJIA", "VIXCLS"},
@@ -32,6 +33,7 @@ func TestE2e(t *testing.T) {
 	}
 
 	reader.GetData(fredReader)
+	// ---------------------------------------------------
 
 	bocReader, err := reader.NewBOCDataReader(
 		[]string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
@@ -44,4 +46,21 @@ func TestE2e(t *testing.T) {
 	}
 
 	reader.GetData(bocReader)
+	// ---------------------------------------------------
+
+	startDate := time.Now().AddDate(0, 0, -100)
+	endDate := time.Now()
+	tiingoReader, _ := reader.NewTiingoDailyReader(
+		[]string{"ZZZOF", "000001"},
+		&startDate,
+		&endDate,
+		nil,
+	)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	reader.GetData(tiingoReader)
+	// ---------------------------------------------------
 }
