@@ -11,9 +11,7 @@ func TestTiingoReaderDefaultInit(t *testing.T) {
 	os.Setenv(TIINGO_API_KEY, apiKey)
 	tdr, err := NewTiingoDailyReader(
 		[]string{},
-		nil,
-		nil,
-		nil,
+		TiingoReaderConfig{},
 	)
 
 	if err != nil {
@@ -31,9 +29,11 @@ func TestTiingoReaderCustomInit(t *testing.T) {
 	apiKey := "MySecretAPIKey"
 	tdr, err := NewTiingoDailyReader(
 		[]string{"sym1", "sym2"},
-		&startDate,
-		&endDate,
-		&apiKey,
+		TiingoReaderConfig{
+			startDate: startDate,
+			endDate:   endDate,
+			apiKey:    apiKey,
+		},
 	)
 
 	if err != nil {
@@ -49,12 +49,19 @@ func TestTiingoReaderEmptyAPIKeyAndNoEnv(t *testing.T) {
 	startDate := time.Now().AddDate(-2, 0, 0)
 	endDate := time.Now()
 	apiKey := ""
-	os.Unsetenv(TIINGO_API_KEY)
-	_, err := NewTiingoDailyReader(
+
+	err := os.Unsetenv(TIINGO_API_KEY)
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = NewTiingoDailyReader(
 		[]string{"sym1", "sym2"},
-		&startDate,
-		&endDate,
-		&apiKey,
+		TiingoReaderConfig{
+			startDate: startDate,
+			endDate:   endDate,
+			apiKey:    apiKey,
+		},
 	)
 
 	if err == nil {
