@@ -52,9 +52,10 @@ func TestE2e(t *testing.T) {
 	endDate := time.Now()
 	tiingoReader, _ := reader.NewTiingoDailyReader(
 		[]string{"ZZZOF", "000001"},
-		&startDate,
-		&endDate,
-		nil,
+		reader.TiingoReaderConfig{
+			StartDate: startDate,
+			EndDate:   endDate,
+		},
 	)
 
 	if err != nil {

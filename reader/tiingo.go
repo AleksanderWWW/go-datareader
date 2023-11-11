@@ -35,44 +35,39 @@ type TiingoDailyReader struct {
 	apiKey    string
 }
 
-func NewTiingoDailyReader(symbols []string,
-	startDate *time.Time,
-	endDate *time.Time,
-	apiKey *string) (*TiingoDailyReader, error) {
+type TiingoReaderConfig struct {
+	StartDate time.Time
+	EndDate   time.Time
+	ApiKey    string
+}
 
-	var startDateVal time.Time
-	var endDateVal time.Time
-	var apiKeyVal string
+func NewTiingoDailyReader(symbols []string,
+	config TiingoReaderConfig) (*TiingoDailyReader, error) {
 
 	// defaults
-	if startDate == nil {
-		startDateVal = time.Now().AddDate(-5, 0, 0)
-	} else {
-		startDateVal = *startDate
+	if config.StartDate.IsZero() {
+		config.StartDate = time.Now().AddDate(-5, 0, 0)
 	}
 
-	if endDate == nil {
-		endDateVal = time.Now()
-	} else {
-		endDateVal = *endDate
+	if config.EndDate.IsZero() {
+		config.EndDate = time.Now()
 	}
 
-	if apiKey == nil || len(*apiKey) == 0 {
-		apiKeyVal = os.Getenv(TIINGO_API_KEY)
-	} else {
-		apiKeyVal = *apiKey
-	}
+	if len(config.ApiKey) == 0 {
+		apiKey, ok := os.LookupEnv(TIINGO_API_KEY)
+		if !ok {
+			return &TiingoDailyReader{}, fmt.Errorf("API token not found")
+		}
 
-	if len(apiKeyVal) == 0 {
-		return &TiingoDailyReader{}, fmt.Errorf("API token not found")
+		config.ApiKey = apiKey
 	}
 
 	return &TiingoDailyReader{
 		symbols:   symbols,
-		startDate: startDateVal,
-		endDate:   endDateVal,
+		startDate: config.StartDate,
+		endDate:   config.EndDate,
 		baseUrl:   "https://api.tiingo.com/tiingo/daily/%s/prices",
-		apiKey:    apiKeyVal,
+		apiKey:    config.ApiKey,
 	}, nil
 }
 
