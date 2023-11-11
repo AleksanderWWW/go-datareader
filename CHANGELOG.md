@@ -5,3 +5,4 @@
 
 ### Changes
 - Repo cleanup ([#1](https://github.com/AleksanderWWW/go-datareader/pull/1))
+- Use config struct to initialize `Tiingo` reader ([#3](https://github.com/AleksanderWWW/go-datareader/pull/3))
