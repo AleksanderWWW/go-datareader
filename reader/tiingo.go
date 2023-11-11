@@ -36,37 +36,37 @@ type TiingoDailyReader struct {
 }
 
 type TiingoReaderConfig struct {
-	startDate time.Time
-	endDate   time.Time
-	apiKey    string
+	StartDate time.Time
+	EndDate   time.Time
+	ApiKey    string
 }
 
 func NewTiingoDailyReader(symbols []string,
 	config TiingoReaderConfig) (*TiingoDailyReader, error) {
 
 	// defaults
-	if config.startDate.IsZero() {
-		config.startDate = time.Now().AddDate(-5, 0, 0)
+	if config.StartDate.IsZero() {
+		config.StartDate = time.Now().AddDate(-5, 0, 0)
 	}
 
-	if config.endDate.IsZero() {
-		config.endDate = time.Now()
+	if config.EndDate.IsZero() {
+		config.EndDate = time.Now()
 	}
 
-	if len(config.apiKey) == 0 {
-		config.apiKey = os.Getenv(TIINGO_API_KEY)
+	if len(config.ApiKey) == 0 {
+		config.ApiKey = os.Getenv(TIINGO_API_KEY)
 	}
 
-	if len(config.apiKey) == 0 {
+	if len(config.ApiKey) == 0 {
 		return &TiingoDailyReader{}, fmt.Errorf("API token not found")
 	}
 
 	return &TiingoDailyReader{
 		symbols:   symbols,
-		startDate: config.startDate,
-		endDate:   config.endDate,
+		startDate: config.StartDate,
+		endDate:   config.EndDate,
 		baseUrl:   "https://api.tiingo.com/tiingo/daily/%s/prices",
-		apiKey:    config.apiKey,
+		apiKey:    config.ApiKey,
 	}, nil
 }
 

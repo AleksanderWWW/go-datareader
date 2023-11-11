@@ -30,9 +30,9 @@ func TestTiingoReaderCustomInit(t *testing.T) {
 	tdr, err := NewTiingoDailyReader(
 		[]string{"sym1", "sym2"},
 		TiingoReaderConfig{
-			startDate: startDate,
-			endDate:   endDate,
-			apiKey:    apiKey,
+			StartDate: startDate,
+			EndDate:   endDate,
+			ApiKey:    apiKey,
 		},
 	)
 
@@ -58,9 +58,9 @@ func TestTiingoReaderEmptyAPIKeyAndNoEnv(t *testing.T) {
 	_, err = NewTiingoDailyReader(
 		[]string{"sym1", "sym2"},
 		TiingoReaderConfig{
-			startDate: startDate,
-			endDate:   endDate,
-			apiKey:    apiKey,
+			StartDate: startDate,
+			EndDate:   endDate,
+			ApiKey:    apiKey,
 		},
 	)
 
