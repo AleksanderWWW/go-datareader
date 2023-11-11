@@ -54,11 +54,12 @@ func NewTiingoDailyReader(symbols []string,
 	}
 
 	if len(config.ApiKey) == 0 {
-		config.ApiKey = os.Getenv(TIINGO_API_KEY)
-	}
+		apiKey, ok := os.LookupEnv(TIINGO_API_KEY)
+		if !ok {
+			return &TiingoDailyReader{}, fmt.Errorf("API token not found")
+		}
 
-	if len(config.ApiKey) == 0 {
-		return &TiingoDailyReader{}, fmt.Errorf("API token not found")
+		config.ApiKey = apiKey
 	}
 
 	return &TiingoDailyReader{
