@@ -92,13 +92,18 @@ The list of available symbols can be found [here](https://www.bankofcanada.ca/va
 	startDate := time.Now().AddDate(0, 0, -4)
 	endDate := time.Now()
 	apiKey := "my-secret-api-key"
-	os.Setenv(TIINGO_API_KEY, apiKey)  // either export the key as env variable...
+	os.Setenv("TIINGO_API_KEY", apiKey)  // either export the key as env variable...
 
 	tiingoReader, err := reader.NewTiingoDailyReader(
 		[]string{"ZZZOF", "000001"},
-		&startDate,  // default is 5 yrs before current date (if nil)
-		&endDate,  // default is current date (if nil)
-		nil,  // ...or pass it here as *apiKey
+		tiingoReader, _ := reader.NewTiingoDailyReader(
+		[]string{"ZZZOF", "000001"},
+		reader.TiingoReaderConfig{
+			StartDate: startDate,
+			EndDate:   endDate,
+			ApiKey:    apiKey  // ... or pass it here.
+		},
+	)
 
 	)
 
@@ -109,3 +114,5 @@ The list of available symbols can be found [here](https://www.bankofcanada.ca/va
 ```
 
 The list of available symbols can be found [here](https://apimedia.tiingo.com/docs/tiingo/daily/supported_tickers.zip).
+There are two ways to pass the `Tiingo` API token - either explicitly in the `TiingoReaderConfig` (takes precedence),
+or via a `TIINGO_API_KEY` envirionment variable (recommended option).
