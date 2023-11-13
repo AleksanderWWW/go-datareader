@@ -25,21 +25,32 @@ import (
 	"github.com/go-gota/gota/series"
 )
 
+type FredReaderConfig struct {
+	Symbols   []string
+	StartDate time.Time
+	EndDate   time.Time
+}
+
 type FredDataReader struct {
 	symbols   []string
 	startDate time.Time
 	endDate   time.Time
-	baseUrl   string
 }
 
-func NewFredDataReader(symbols []string, startDate time.Time, endDate time.Time) (*FredDataReader, error) {
-	baseUrl := "https://fred.stlouisfed.org/graph/fredgraph.csv"
+func NewFredDataReader(config FredReaderConfig) (*FredDataReader, error) {
+	// defaults
+	if config.StartDate.IsZero() {
+		config.StartDate = time.Now().AddDate(-5, 0, 0)
+	}
+
+	if config.EndDate.IsZero() {
+		config.EndDate = time.Now()
+	}
 
 	return &FredDataReader{
-		symbols:   symbols,
-		startDate: startDate,
-		endDate:   endDate,
-		baseUrl:   baseUrl,
+		symbols:   config.Symbols,
+		startDate: config.StartDate,
+		endDate:   config.EndDate,
 	}, nil
 }
 
@@ -52,7 +63,8 @@ func (fdr *FredDataReader) getSymbols() []string {
 }
 
 func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
-	data, err := getResponse(nil, nil, fmt.Sprintf("%s?id=%s", fdr.baseUrl, symbol))
+	baseUrl := "https://fred.stlouisfed.org/graph/fredgraph.csv"
+	data, err := getResponse(nil, nil, fmt.Sprintf("%s?id=%s", baseUrl, symbol))
 
 	if err != nil {
 		return dataframe.DataFrame{}, err

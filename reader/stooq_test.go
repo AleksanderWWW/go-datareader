@@ -12,7 +12,14 @@ import (
 func TestGetParams(t *testing.T) {
 	d1 := time.Now().AddDate(0, 0, -1)
 	d2 := time.Now()
-	stooqReader, err := NewStooqDataReader([]string{"PKO"}, d1, d2, "d")
+	stooqReader, err := NewStooqDataReader(
+		StooqReaderConfig{
+			Symbols:   []string{"PKO"},
+			StartDate: d1,
+			EndDate:   d2,
+			Freq:      "d",
+		},
+	)
 
 	if err != nil {
 		t.Errorf("FAIL: %s", err)
@@ -36,7 +43,13 @@ func TestGetParams(t *testing.T) {
 }
 
 func TestRead(t *testing.T) {
-	stooqReader, err := NewStooqDataReader([]string{"PKO"}, time.Now().AddDate(0, 0, -10), time.Now(), "d")
+	stooqReader, err := NewStooqDataReader(
+		StooqReaderConfig{
+			Symbols:   []string{"PKO"},
+			Freq:      "d",
+			StartDate: time.Now().AddDate(0, 0, -10),
+		},
+	)
 
 	if err != nil {
 		t.Errorf("FAIL: %s", err)

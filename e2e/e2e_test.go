@@ -9,10 +9,12 @@ import (
 
 func TestE2e(t *testing.T) {
 	stooqReader, err := reader.NewStooqDataReader(
-		[]string{"PKO", "KGH", "PZU"},
-		time.Now().AddDate(0, 0, -100),
-		time.Now(),
-		"d",
+		reader.StooqReaderConfig{
+			Symbols:   []string{"PKO", "KGH", "PZU"},
+			StartDate: time.Now().AddDate(0, 0, -100),
+			EndDate:   time.Now(),
+			Freq:      "d",
+		},
 	)
 
 	if err != nil {
@@ -23,9 +25,11 @@ func TestE2e(t *testing.T) {
 	// ---------------------------------------------------
 
 	fredReader, err := reader.NewFredDataReader(
-		[]string{"SP500", "DJIA", "VIXCLS"},
-		time.Now().AddDate(0, 0, -100),
-		time.Now(),
+		reader.FredReaderConfig{
+			Symbols:   []string{"SP500", "DJIA", "VIXCLS"},
+			StartDate: time.Now().AddDate(0, 0, -100),
+			EndDate:   time.Now(),
+		},
 	)
 
 	if err != nil {
@@ -36,9 +40,11 @@ func TestE2e(t *testing.T) {
 	// ---------------------------------------------------
 
 	bocReader, err := reader.NewBOCDataReader(
-		[]string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
-		time.Now().AddDate(0, 0, -100),
-		time.Now(),
+		reader.BOCReaderConfig{
+			Symbols:   []string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
+			StartDate: time.Now().AddDate(0, 0, -100),
+			EndDate:   time.Now(),
+		},
 	)
 
 	if err != nil {
@@ -51,8 +57,8 @@ func TestE2e(t *testing.T) {
 	startDate := time.Now().AddDate(0, 0, -100)
 	endDate := time.Now()
 	tiingoReader, _ := reader.NewTiingoDailyReader(
-		[]string{"ZZZOF", "000001"},
 		reader.TiingoReaderConfig{
+			Symbols:   []string{"ZZZOF", "000001"},
 			StartDate: startDate,
 			EndDate:   endDate,
 		},

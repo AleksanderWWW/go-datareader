@@ -52,13 +52,13 @@ type TiingoDailyReader struct {
 }
 
 type TiingoReaderConfig struct {
+	Symbols   []string
 	StartDate time.Time
 	EndDate   time.Time
 	ApiKey    string
 }
 
-func NewTiingoDailyReader(symbols []string,
-	config TiingoReaderConfig) (*TiingoDailyReader, error) {
+func NewTiingoDailyReader(config TiingoReaderConfig) (*TiingoDailyReader, error) {
 
 	// defaults
 	if config.StartDate.IsZero() {
@@ -79,7 +79,7 @@ func NewTiingoDailyReader(symbols []string,
 	}
 
 	return &TiingoDailyReader{
-		symbols:   symbols,
+		symbols:   config.Symbols,
 		startDate: config.StartDate,
 		endDate:   config.EndDate,
 		baseUrl:   "https://api.tiingo.com/tiingo/daily/%s/prices",
