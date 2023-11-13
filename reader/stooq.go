@@ -33,28 +33,44 @@ var frequenciesAvailable = map[string]bool{
 	"y": true,
 }
 
+type StooqReaderConfig struct {
+	Symbols   []string
+	StartDate time.Time
+	EndDate   time.Time
+	Freq      string
+}
+
 type StooqDataReader struct {
 	symbols   []string
 	startDate time.Time
 	endDate   time.Time
 	freq      string
-	baseUrl   string
 }
 
-func NewStooqDataReader(symbols []string, startDate time.Time, endDate time.Time, freq string) (*StooqDataReader, error) {
-	baseUrl := "https://stooq.com/q/d/l"
-
-	if _, ok := frequenciesAvailable[freq]; !ok {
-		errMsg := fmt.Sprintf("Incorrect frequency chosen: %s", freq)
+func NewStooqDataReader(config StooqReaderConfig) (*StooqDataReader, error) {
+	if _, ok := frequenciesAvailable[config.Freq]; !ok {
+		errMsg := fmt.Sprintf("Incorrect frequency chosen: %s", config.Freq)
 		return &StooqDataReader{}, errors.New(errMsg)
 	}
 
+	// defaults
+	if config.StartDate.IsZero() {
+		config.StartDate = time.Now().AddDate(-5, 0, 0)
+	}
+
+	if config.EndDate.IsZero() {
+		config.EndDate = time.Now()
+	}
+
+	if config.Freq == "" {
+		config.Freq = "d"
+	}
+
 	return &StooqDataReader{
-		symbols:   symbols,
-		freq:      freq,
-		startDate: startDate,
-		endDate:   endDate,
-		baseUrl:   baseUrl,
+		symbols:   config.Symbols,
+		freq:      config.Freq,
+		startDate: config.StartDate,
+		endDate:   config.EndDate,
 	}, nil
 }
 
@@ -76,8 +92,9 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string {
 }
 
 func (sdr StooqDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
+	baseUrl := "https://stooq.com/q/d/l"
 	params := sdr.getParams(symbol)
-	data, err := getResponse(params, DefaultHeaders, sdr.baseUrl)
+	data, err := getResponse(params, DefaultHeaders, baseUrl)
 
 	if err != nil {
 		return dataframe.DataFrame{}, err

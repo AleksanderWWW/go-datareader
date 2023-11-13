@@ -25,6 +25,12 @@ import (
 	"github.com/go-gota/gota/dataframe"
 )
 
+type BOCReaderConfig struct {
+	Symbols   []string
+	StartDate time.Time
+	EndDate   time.Time
+}
+
 type BOCDataReader struct {
 	symbols   []string
 	startDate time.Time
@@ -32,13 +38,22 @@ type BOCDataReader struct {
 	baseUrl   string
 }
 
-func NewBOCDataReader(symbols []string, startDate time.Time, endDate time.Time) (*BOCDataReader, error) {
+func NewBOCDataReader(config BOCReaderConfig) (*BOCDataReader, error) {
 	baseUrl := "http://www.bankofcanada.ca/valet/observations"
 
+	// defaults
+	if config.StartDate.IsZero() {
+		config.StartDate = time.Now().AddDate(-5, 0, 0)
+	}
+
+	if config.EndDate.IsZero() {
+		config.EndDate = time.Now()
+	}
+
 	return &BOCDataReader{
-		symbols:   symbols,
-		startDate: startDate,
-		endDate:   endDate,
+		symbols:   config.Symbols,
+		startDate: config.StartDate,
+		endDate:   config.EndDate,
 		baseUrl:   baseUrl,
 	}, nil
 }
