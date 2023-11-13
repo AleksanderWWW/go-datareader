@@ -17,18 +17,11 @@ limitations under the License.
 package reader
 
 import (
-	"fmt"
-	"io/fs"
 	"log"
-	"os"
 	"sync"
 
 	"github.com/go-gota/gota/dataframe"
 )
-
-const LogsDirpath string = "logs"
-
-const LogsFilePermission fs.FileMode = 0777
 
 type DataReader interface {
 	getName() string
@@ -45,24 +38,11 @@ var DefaultHeaders = map[string]string{
 }
 
 func GetData(reader DataReader) dataframe.DataFrame {
-	if _, err := os.Stat(LogsDirpath); os.IsNotExist(err) {
-		os.Mkdir(LogsDirpath, LogsFilePermission)
-	}
-
-	loggerName := getLoggerName(reader.getName())
-
-	loggerPath, err := os.OpenFile(LogsDirpath+"/"+loggerName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, LogsFilePermission)
-	if err != nil {
-		fmt.Printf("Error setting up logging %s. Logs will not be saved", err)
-	}
-
-	defer loggerPath.Close()
-
-	errorLogger := log.New(loggerPath, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-
 	symbols := reader.getSymbols()
 	results := make([]dataframe.DataFrame, 0, len(symbols))
 	var wg sync.WaitGroup
+
+	log.Printf("Scraping data from '%s'", reader.getName())
 
 	for _, symbol := range symbols {
 
@@ -70,10 +50,9 @@ func GetData(reader DataReader) dataframe.DataFrame {
 
 		go func(symbol string) {
 			defer wg.Done()
-
 			singleDf, err := reader.readSingle(symbol)
 			if err != nil {
-				errorLogger.Println(symbol, err)
+				log.Println("[ERROR]", symbol, err)
 				return
 			}
 
@@ -82,6 +61,6 @@ func GetData(reader DataReader) dataframe.DataFrame {
 	}
 
 	wg.Wait()
-
+	log.Printf("Finished scraping data from '%s'", reader.getName())
 	return reader.concatDataframes(results)
 }
