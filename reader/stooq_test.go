@@ -45,8 +45,9 @@ func TestGetParams(t *testing.T) {
 func TestRead(t *testing.T) {
 	stooqReader, err := NewStooqDataReader(
 		StooqReaderConfig{
-			Symbols: []string{"PKO"},
-			Freq:    "d",
+			Symbols:   []string{"PKO"},
+			Freq:      "d",
+			StartDate: time.Now().AddDate(0, 0, -10),
 		},
 	)
 
