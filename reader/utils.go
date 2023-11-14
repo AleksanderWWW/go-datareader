@@ -108,9 +108,3 @@ func renameDataframe(df dataframe.DataFrame, symbol string) dataframe.DataFrame 
 	}
 	return df
 }
-
-func getLoggerName(name string) string {
-	year, month, day := time.Now().Date()
-
-	return fmt.Sprintf("%v-%v-%v-%v.log", name, day, month.String(), year)
-}
