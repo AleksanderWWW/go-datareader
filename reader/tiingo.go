@@ -49,13 +49,6 @@ type TiingoDailyReader struct {
 	apiKey    string
 }
 
-type TiingoReaderConfig struct {
-	Symbols   []string
-	StartDate time.Time
-	EndDate   time.Time
-	ApiKey    string
-}
-
 func NewTiingoDailyReader(config TiingoReaderConfig) (*TiingoDailyReader, error) {
 
 	// defaults

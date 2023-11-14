@@ -26,12 +26,6 @@ import (
 	"github.com/go-gota/gota/series"
 )
 
-type FredReaderConfig struct {
-	Symbols   []string
-	StartDate time.Time
-	EndDate   time.Time
-}
-
 type FredDataReader struct {
 	symbols   []string
 	startDate time.Time

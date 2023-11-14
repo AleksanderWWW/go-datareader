@@ -26,12 +26,6 @@ import (
 	"github.com/go-gota/gota/dataframe"
 )
 
-type BOCReaderConfig struct {
-	Symbols   []string
-	StartDate time.Time
-	EndDate   time.Time
-}
-
 type BOCDataReader struct {
 	symbols   []string
 	startDate time.Time
