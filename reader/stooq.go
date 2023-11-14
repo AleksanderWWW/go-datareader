@@ -34,13 +34,6 @@ var frequenciesAvailable = map[string]bool{
 	"y": true,
 }
 
-type StooqReaderConfig struct {
-	Symbols   []string
-	StartDate time.Time
-	EndDate   time.Time
-	Freq      string
-}
-
 type StooqDataReader struct {
 	symbols   []string
 	startDate time.Time
