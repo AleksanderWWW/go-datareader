@@ -26,8 +26,6 @@ import (
 	"github.com/go-gota/gota/dataframe"
 )
 
-const TIINGO_API_KEY = "TIINGO_API_KEY"
-
 type TiingoRecord struct {
 	Date        string  `json:"Date"`
 	Close       float32 `json:"Close"`
