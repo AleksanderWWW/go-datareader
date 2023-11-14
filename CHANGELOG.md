@@ -9,3 +9,6 @@
 - Use config structs to initialize readers ([#5](https://github.com/AleksanderWWW/go-datareader/pull/5))
 - Remove logging to file ([#6](https://github.com/AleksanderWWW/go-datareader/pull/6))
 - Move base urls to a separate `constants.go` file ([#8](https://github.com/AleksanderWWW/go-datareader/pull/8))
+
+### Fixes
+- Handle empty dataframe list in `concatDataframes` ([#9](https://github.com/AleksanderWWW/go-datareader/pull/9))
