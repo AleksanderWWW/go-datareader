@@ -18,6 +18,7 @@ package reader
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -122,6 +123,11 @@ func (tdr *TiingoDailyReader) readSingle(symbol string) (dataframe.DataFrame, er
 }
 
 func (tdr *TiingoDailyReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+	if len(dfs) == 0 {
+		log.Printf("[WARNING] Returning empty data frame for %s", tdr.getName())
+		return dataframe.DataFrame{}
+	}
+
 	combined := dfs[0]
 	if len(dfs) > 1 {
 		for _, df := range dfs[1:] {

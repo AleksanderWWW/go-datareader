@@ -19,6 +19,7 @@ package reader
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -110,6 +111,11 @@ func (sdr StooqDataReader) readSingle(symbol string) (dataframe.DataFrame, error
 }
 
 func (sdr StooqDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+	if len(dfs) == 0 {
+		log.Printf("[WARNING] Returning empty data frame for %s", sdr.getName())
+		return dataframe.DataFrame{}
+	}
+
 	combined := dfs[0]
 	if len(dfs) > 1 {
 

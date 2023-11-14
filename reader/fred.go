@@ -18,6 +18,7 @@ package reader
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -100,6 +101,11 @@ func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error
 }
 
 func (fdr *FredDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.DataFrame {
+	if len(dfs) == 0 {
+		log.Printf("[WARNING] Returning empty data frame for %s", fdr.getName())
+		return dataframe.DataFrame{}
+	}
+
 	combined := dfs[0]
 	if len(dfs) > 1 {
 

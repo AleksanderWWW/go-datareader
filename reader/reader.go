@@ -52,7 +52,7 @@ func GetData(reader DataReader) dataframe.DataFrame {
 			defer wg.Done()
 			singleDf, err := reader.readSingle(symbol)
 			if err != nil {
-				log.Println("[ERROR]", symbol, err)
+				log.Printf("[ERROR] [%s] [%s] - %s", reader.getName(), symbol, err)
 				return
 			}
 
