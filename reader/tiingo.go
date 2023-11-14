@@ -47,7 +47,6 @@ type TiingoDailyReader struct {
 	symbols   []string
 	startDate time.Time
 	endDate   time.Time
-	baseUrl   string
 	apiKey    string
 }
 
@@ -82,7 +81,6 @@ func NewTiingoDailyReader(config TiingoReaderConfig) (*TiingoDailyReader, error)
 		symbols:   config.Symbols,
 		startDate: config.StartDate,
 		endDate:   config.EndDate,
-		baseUrl:   "https://api.tiingo.com/tiingo/daily/%s/prices",
 		apiKey:    config.ApiKey,
 	}, nil
 }
@@ -111,7 +109,7 @@ func (tdr *TiingoDailyReader) headers() map[string]string {
 }
 
 func (tdr *TiingoDailyReader) url(symbol string) string {
-	return fmt.Sprintf(tdr.baseUrl, symbol)
+	return fmt.Sprintf(TiingoBaseUrl, symbol)
 }
 
 func (tdr *TiingoDailyReader) readSingle(symbol string) (dataframe.DataFrame, error) {
