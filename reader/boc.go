@@ -19,6 +19,7 @@ package reader
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -105,5 +106,6 @@ func (bdr BOCDataReader) concatDataframes(dfs []dataframe.DataFrame) dataframe.D
 	if len(dfs) > 0 {
 		return dfs[0]
 	}
+	log.Printf("[WARNING] Returning empty data frame for %s", bdr.getName())
 	return dataframe.DataFrame{}
 }
