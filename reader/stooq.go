@@ -92,9 +92,8 @@ func (sdr StooqDataReader) getParams(symbol string) map[string]string {
 }
 
 func (sdr StooqDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
-	baseUrl := "https://stooq.com/q/d/l"
 	params := sdr.getParams(symbol)
-	data, err := getResponse(params, DefaultHeaders, baseUrl)
+	data, err := getResponse(params, DefaultHeaders, StooqBaseUrl)
 
 	if err != nil {
 		return dataframe.DataFrame{}, err

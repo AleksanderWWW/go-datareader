@@ -62,9 +62,12 @@ func (fdr *FredDataReader) getSymbols() []string {
 	return fdr.symbols
 }
 
+func (fdr *FredDataReader) url(symbol string) string {
+	return fmt.Sprintf(FredBaseUrl, symbol)
+}
+
 func (fdr *FredDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
-	baseUrl := "https://fred.stlouisfed.org/graph/fredgraph.csv"
-	data, err := getResponse(nil, nil, fmt.Sprintf("%s?id=%s", baseUrl, symbol))
+	data, err := getResponse(nil, nil, fdr.url(symbol))
 
 	if err != nil {
 		return dataframe.DataFrame{}, err

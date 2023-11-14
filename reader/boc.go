@@ -35,11 +35,9 @@ type BOCDataReader struct {
 	symbols   []string
 	startDate time.Time
 	endDate   time.Time
-	baseUrl   string
 }
 
 func NewBOCDataReader(config BOCReaderConfig) (*BOCDataReader, error) {
-	baseUrl := "http://www.bankofcanada.ca/valet/observations"
 
 	// defaults
 	if config.StartDate.IsZero() {
@@ -54,31 +52,33 @@ func NewBOCDataReader(config BOCReaderConfig) (*BOCDataReader, error) {
 		symbols:   config.Symbols,
 		startDate: config.StartDate,
 		endDate:   config.EndDate,
-		baseUrl:   baseUrl,
 	}, nil
 }
 
-func (bdr BOCDataReader) getName() string {
+func (bdr *BOCDataReader) getName() string {
 	return "bank-of-canada"
 }
 
-func (bdr BOCDataReader) getSymbols() []string {
+func (bdr *BOCDataReader) getSymbols() []string {
 	result := strings.Join(bdr.symbols, ",")
 
 	return []string{result}
 }
 
-func (bdr BOCDataReader) getParams() map[string]string {
+func (bdr *BOCDataReader) getParams() map[string]string {
 	return map[string]string{
 		"start_date": bdr.startDate.Format("2006-01-02"),
 		"end_date":   bdr.endDate.Format("2006-01-02"),
 	}
 }
 
-func (bdr BOCDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
+func (bdr *BOCDataReader) url(symbol string) string {
+	return fmt.Sprintf(BOCBaseUrl, symbol)
+}
+
+func (bdr *BOCDataReader) readSingle(symbol string) (dataframe.DataFrame, error) {
 	params := bdr.getParams()
-	url := fmt.Sprintf("%s/%s/csv", bdr.baseUrl, symbol)
-	data, err := getResponse(params, DefaultHeaders, url)
+	data, err := getResponse(params, DefaultHeaders, bdr.url(symbol))
 
 	data_splitted := strings.Split(data, "OBSERVATIONS")
 
