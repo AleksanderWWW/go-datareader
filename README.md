@@ -7,11 +7,12 @@ The project currently supports the following data providers:
 - [Stooq](https://stooq.com)
 - [FRED](https://fred.stlouisfed.org)
 - [Bank of Canada](https://www.bankofcanada.ca/)
+- [Tiingo](https://www.tiingo.com/)  (currently only 'daily reader')
 
 
 ## Advantages over pandas-datareader
 
-The two main advantages of `go-datareader` over it's counterpart are:
+The two main advantages of `go-datareader` over its counterpart are:
 
 - better overall performance due to strong typing and a compiled nature of the Go programming langauge, compared to the interpreted, dynamically-typed Python
 - faster data extraction due to the usage of `goroutines` to send the requests concurrently.
@@ -32,11 +33,13 @@ The returned data is in the form of the [gota](https://github.com/go-gota/gota) 
 ### Stooq
 ```
 stooqReader, err := reader.NewStooqDataReader(
-		[]string{"PKO", "KGH", "PZU"},  // stooq tickers
-		time.Now().AddDate(0, 0, -100),  // start date
-		time.Now(),  // end date
-		"d",  // daily
-	)
+	reader.StooqReaderConfig{
+		Symbols:   []string{"PKO", "KGH", "PZU"},
+		StartDate: time.Now().AddDate(0, 0, -100),
+		EndDate:   time.Now(),
+		Freq:      "d",
+	},
+)
 
 // error handling
 // ...
@@ -50,14 +53,20 @@ In this example the quotes are obtained in a "daily" mode. Other available optio
 - "q": quarterly
 - "y": yearly
 
+If no frequency is provided, the reader will default to "d".
+
+If `startDate` or `endDate` are not provided, the reader will default to '5 years ago' and 'now' respectively.
+
 ---
 
 ### FRED
 ```
 fredReader, err := reader.NewFredDataReader(
-		[]string{"SP500", "DJIA", "VIXCLS"},
-		time.Now().AddDate(0, 0, -100),
-		time.Now(),
+		reader.FredReaderConfig{
+			Symbols:   []string{"SP500", "DJIA", "VIXCLS"},
+			StartDate: time.Now().AddDate(0, 0, -100),
+			EndDate:   time.Now(),
+		},
 	)
 
 // error handling
@@ -66,14 +75,18 @@ fredReader, err := reader.NewFredDataReader(
 data := reader.GetData(fredReader)
 ```
 
+If `startDate` or `endDate` are not provided, the reader will default to '5 years ago' and 'now' respectively.
+
 ---
 
 ### Bank of Canada
 ```
 bocReader, err := reader.NewBOCDataReader(
-		[]string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
-		time.Now().AddDate(0, 0, -100),
-		time.Now(),
+		reader.BOCReaderConfig{
+			Symbols:   []string{"FXUSDCAD", "FXCADIDR", "FXCADPEN"},
+			StartDate: time.Now().AddDate(0, 0, -100),
+			EndDate:   time.Now(),
+		},
 	)
 
 // error handling
@@ -84,35 +97,39 @@ data := reader.GetData(bocReader)
 
 The list of available symbols can be found [here](https://www.bankofcanada.ca/valet/lists/series).
 
----
+If `startDate` or `endDate` are not provided, the reader will default to '5 years ago' and 'now' respectively.
 
+---
 
 ### Tiingo
 ```
-	startDate := time.Now().AddDate(0, 0, -4)
-	endDate := time.Now()
-	apiKey := "my-secret-api-key"
-	os.Setenv("TIINGO_API_KEY", apiKey)  // either export the key as env variable...
+startDate := time.Now().AddDate(0, 0, -4)
+endDate := time.Now()
+apiKey := "my-secret-api-key"
+os.Setenv("TIINGO_API_KEY", apiKey)  // either export the key as env variable...
 
-	tiingoReader, err := reader.NewTiingoDailyReader(
-		[]string{"ZZZOF", "000001"},
-		tiingoReader, _ := reader.NewTiingoDailyReader(
-		[]string{"ZZZOF", "000001"},
-		reader.TiingoReaderConfig{
-			StartDate: startDate,
-			EndDate:   endDate,
-			ApiKey:    apiKey  // ... or pass it here.
-		},
-	)
+tiingoReader, err := reader.NewTiingoDailyReader(
+	[]string{"ZZZOF", "000001"},
+	tiingoReader, _ := reader.NewTiingoDailyReader(
+	[]string{"ZZZOF", "000001"},
+	reader.TiingoReaderConfig{
+		StartDate: startDate,
+		EndDate:   endDate,
+		ApiKey:    apiKey  // ... or pass it here.
+	},
+)
 
-	)
+)
 
-	// error handling
-	// ...
+// error handling
+// ...
 
-	data := reader.GetData(tiingoReader)
+data := reader.GetData(tiingoReader)
 ```
 
 The list of available symbols can be found [here](https://apimedia.tiingo.com/docs/tiingo/daily/supported_tickers.zip).
+
 There are two ways to pass the `Tiingo` API token - either explicitly in the `TiingoReaderConfig` (takes precedence),
 or via a `TIINGO_API_KEY` envirionment variable (recommended option).
+
+If `startDate` or `endDate` are not provided, the reader will default to '5 years ago' and 'now' respectively.
