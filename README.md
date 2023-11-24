@@ -7,12 +7,12 @@ The project currently supports the following data providers:
 - [Stooq](https://stooq.com)
 - [FRED](https://fred.stlouisfed.org)
 - [Bank of Canada](https://www.bankofcanada.ca/)
-- [Tiingo](https://www.tiingo.com/)
+- [Tiingo](https://www.tiingo.com/)  (currently only 'daily reader')
 
 
 ## Advantages over pandas-datareader
 
-The two main advantages of `go-datareader` over it's counterpart are:
+The two main advantages of `go-datareader` over its counterpart are:
 
 - better overall performance due to strong typing and a compiled nature of the Go programming langauge, compared to the interpreted, dynamically-typed Python
 - faster data extraction due to the usage of `goroutines` to send the requests concurrently.
