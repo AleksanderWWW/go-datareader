@@ -1,2 +1,4 @@
 main.go
 logs/
+cover.out
+cover.html
